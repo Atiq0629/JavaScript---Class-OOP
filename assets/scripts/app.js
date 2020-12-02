@@ -60,14 +60,18 @@ class ShoppingCart extends Component{
     }
 
     constructor (renderHookId){
-        super(renderHookId);
+        super(renderHookId, false);
+        this.orderProducts = () => {
+            console.log('ordering...');
+            console.log(this.item);
+        }
+        this.render();
     }
 
     addProduct(product){
         const updatedItems = [...this.item];
         updatedItems.push(product);
-        this.cartItems = updatedItems;
-        
+        this.cartItems = updatedItems;     
     }
 
     render(){
@@ -76,6 +80,9 @@ class ShoppingCart extends Component{
             <h2>Total: \$${0}</h2>
             <button>Order Now!</button>
         `;
+        const orderButton = cartEl.querySelector('button');
+        // orderButton.addEventListener('click', () => this.orderProducts()); // Alternative
+        orderButton.addEventListener('click', this.orderProducts);
         this.totalOutput = cartEl.querySelector('h2');
     }
 }
@@ -110,15 +117,16 @@ class ProductItem extends Component {
 }
 
 class ProductList extends Component {
-    products = [];
+    #products = [];
 
     constructor(renderHookId) {
-        super(renderHookId);
+        super(renderHookId, false);
+        this.render(); 
         this.fetchProduct();
     }
 
     fetchProduct(){
-        this.products = [
+        this.#products = [
             new Product(
                 'A Pillow', 
                 'https://ae01.alicdn.com/kf/HTB1VOqscZyYBuNkSnfoq6AWgVXaC/Garlands-Of-Summer-Flower-With-Butterfly-Printed-Cotton-Cushion-Cover-European-Design-Throw-Pillow-Case-For.jpg', 
@@ -136,7 +144,7 @@ class ProductList extends Component {
     }
 
     renderProduct() {
-        for(const prod of this.products){
+        for(const prod of this.#products){
             new ProductItem(prod, 'prod-list');
         }
     }
@@ -145,7 +153,7 @@ class ProductList extends Component {
         this.createRootElement('ul', 'product-list', [
             new ElementAttribute('id', 'prod-list')
         ]);
-        if(this.products && this.products.length > 0){
+        if(this.#products && this.#products.length > 0){
             this.renderProduct();
         }
         
@@ -160,7 +168,8 @@ class Shop {
 
     render(){
         this.cart = new ShoppingCart('app');
-        new ProductList('app');
+        new ProductList('app'); 
+
     }
 }
 
